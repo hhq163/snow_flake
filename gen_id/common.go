@@ -1,4 +1,4 @@
-package main
+package gen_id
 
 const (
 	NodeIdBits uint8 = 10 // the biggest is 1024
