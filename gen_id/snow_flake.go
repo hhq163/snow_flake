@@ -1,13 +1,10 @@
 package gen_id
 
-const (
-	MachineIdBits uint8 = 10 // the biggest is 1024
-	IdBits uint8 = 12 // the maximum every millisecond generate is 4096
-	NodeIDMax   int64 = -1 ^ (-1 << workerBits) // the maximum of node id
-	IdMask  int64 = -1 ^ (-1 << numberBits) // the maximum of id, as mask off code
-	TimeShift   uint8 = workerBits + numberBits // timestamp left offset
-	NodeIdShift uint8 = numberBits              // node id left offset
-	Epoch int64 = 1584583903000 // this is the time I write this lib(millisecond)
+import(
+	"time"
+	"fmt"
+	"sync"
+	"errors"
 )
 
 type Generator struct {
@@ -28,11 +25,11 @@ func New(nodeId int64) (*Generator, error) {
 	}, nil
 }
 
-func (g *Generator) GetId() int64 {
+func (g *Generator) GenId() int64 {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 
-	now := time.Now().UnixNano() / 1e6 // 纳秒转毫秒
+	now := time.Now().UnixNano() / 1e6 // nanosecond to millisecond
 	if g.timestamp == now {
 		g.id = (g.id + 1) & IdMask
 
@@ -48,4 +45,18 @@ func (g *Generator) GetId() int64 {
 
 	id := int64((now-Epoch)<<TimeShift | (g.nodeId << NodeIdShift) | (g.id))
 	return id
+}
+//解析ID
+func (g *Generator) PraseId(id int64) (int64, int32, int32, error){
+	if id <=0 {
+		return 0, 0, 0, errors.New("id is not valid")
+	}
+	timestamp := id>>TimeShift
+	timestamp += Epoch
+
+	nodeMask := NodeIDMax << NodeIdShift
+	nodeId := (id & nodeMask)>>IdBits
+
+	idNumber := id&IdMask
+	return timestamp, int32(nodeId), int32(idNumber), nil
 }
