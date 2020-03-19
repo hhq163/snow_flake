@@ -7,7 +7,9 @@ snow_flake算法golang实现
 
 
 ### 使用示例
-```golang
+```go
+import "github.com/hhq163/snow_flake/gen_id"
+
 node, err := gen_id.New(13)
 if err != nil {
     fmt.Println(err)
