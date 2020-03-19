@@ -43,5 +43,6 @@ func main() {
 
 		fmt.Println("id=", id, "nodeid=", nodeid, "tm=", tm.Format("2006-01-02 15:04:05"), "idNumber=", idNumber)
 	}
+	
 	fmt.Println("the length of ids is ", len(ids))
 }
