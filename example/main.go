@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
 	"github.com/hhq163/snow_flake/gen_id"
 )
 
 func main() {
-	node, err := gen_id.New(13)
+	node, err := gen_id.New(16)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -41,8 +42,8 @@ func main() {
 		}
 		tm := time.Unix(timestamp/1000, 0)
 
-		fmt.Println("id=", id, "nodeid=", nodeid, "tm=", tm.Format("2006-01-02 15:04:05"), "idNumber=", idNumber)
+		fmt.Println("id=", id, ", nodeid=", nodeid, ", tm=", tm.Format("2006-01-02 15:04:05"), ", idNumber=", idNumber)
 	}
-	
+
 	fmt.Println("the length of ids is ", len(ids))
 }

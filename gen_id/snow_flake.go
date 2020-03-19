@@ -1,17 +1,17 @@
 package gen_id
 
-import(
-	"time"
+import (
+	"errors"
 	"fmt"
 	"sync"
-	"errors"
+	"time"
 )
 
 type Generator struct {
-	mu        sync.Mutex 
-	timestamp int64      
-	nodeId  int64      
-	id    int64  
+	mu        sync.Mutex
+	timestamp int64
+	nodeId    int64
+	id        int64
 }
 
 func New(nodeId int64) (*Generator, error) {
@@ -20,8 +20,8 @@ func New(nodeId int64) (*Generator, error) {
 	}
 	return &Generator{
 		timestamp: 0,
-		nodeId:  nodeId,
-		id:    0,
+		nodeId:    nodeId,
+		id:        0,
 	}, nil
 }
 
@@ -46,17 +46,18 @@ func (g *Generator) GenId() int64 {
 	id := int64((now-Epoch)<<TimeShift | (g.nodeId << NodeIdShift) | (g.id))
 	return id
 }
+
 //解析ID
-func (g *Generator) PraseId(id int64) (int64, int32, int32, error){
-	if id <=0 {
+func (g *Generator) PraseId(id int64) (int64, int32, int32, error) {
+	if id <= 0 {
 		return 0, 0, 0, errors.New("id is not valid")
 	}
-	timestamp := id>>TimeShift
+	timestamp := id >> TimeShift
 	timestamp += Epoch
 
 	nodeMask := NodeIDMax << NodeIdShift
-	nodeId := (id & nodeMask)>>IdBits
+	nodeId := (id & nodeMask) >> IdBits
 
-	idNumber := id&IdMask
+	idNumber := id & IdMask
 	return timestamp, int32(nodeId), int32(idNumber), nil
 }
